@@ -38,14 +38,6 @@ public class App {
         List<Student> students2 = studentRepository.getAllStudents();
         printStudents(students2);
 
-        // Adding a new student
-        Student newStudent = new Student("John", "Doe", LocalDate.of(1995, 5, 15), "john.doe@example.com", "+129849842998");
-        studentRepository.saveStudent(newStudent);
-
-        // Getting a list of all students after adding a new student
-        List<Student> students3 = studentRepository.getAllStudents();
-        printStudents(students3);
-
     }
 
     // Method to create a list of 10 students
@@ -55,12 +47,12 @@ public class App {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
         // Adding 10 students to the list
-        students.add(new Student(1L,"John", "Doe", LocalDate.parse("15.05.1995", formatter), "john.doe@example.com", "+11234567890"));
+        students.add(new Student(1L,"John", "Doe", LocalDate.parse("15.05.1988", formatter), "john.doe@example.com", "+11234567890"));
         students.add(new Student(2L,"Jane", "Smith", LocalDate.parse("25.08.1998", formatter), "jane.smith@example.com", "+19876543210"));
         students.add(new Student(3L,"Michael", "Johnson", LocalDate.parse("10.03.1997", formatter), "michael.johnson@example.com", "+14567890123"));
         students.add(new Student(4L,"Emily", "Brown", LocalDate.parse("05.10.1996", formatter), "emily.brown@example.com", "+17890123456"));
-        students.add(new Student(5L,"William", "Lee", LocalDate.parse("20.12.1999", formatter), "william.lee@example.com", "+12345678901"));
-        students.add(new Student(6L,"Olivia", "Wang", LocalDate.parse("30.07.1994", formatter), "olivia.wang@example.com", "+19081726354"));
+        students.add(new Student(5L,"William", "Lee", LocalDate.parse("20.12.1982", formatter), "william.lee@example.com", "+12345678901"));
+        students.add(new Student(6L,"Olivia", "Wang", LocalDate.parse("30.07.1985", formatter), "olivia.wang@example.com", "+19081726354"));
         students.add(new Student(7L,"James", "Kim", LocalDate.parse("08.04.1993", formatter), "james.kim@example.com", "+13456789012"));
         students.add(new Student(8L,"Sophia", "Chen", LocalDate.parse("18.06.2000", formatter), "sophia.chen@example.com", "+15678901234"));
         students.add(new Student(9L,"Alexander", "Liu", LocalDate.parse("01.11.1992", formatter), "alexander.liu@example.com", "+16789012345"));

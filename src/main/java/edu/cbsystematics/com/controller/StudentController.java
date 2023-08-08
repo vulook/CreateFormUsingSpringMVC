@@ -43,6 +43,13 @@ public class StudentController {
         return "student-details";
     }
 
+    @GetMapping("/view-all")
+    public String viewAllStudents(Model model) {
+        model.addAttribute("students", studentRepository.getAllStudents());
+        model.addAttribute("totalRecords", studentRepository.getTotalRecords());
+        return "student-all";
+    }
+
     @GetMapping("/form-for-save")
     public String saveStudentForm(Model model) {
         model.addAttribute("student", new Student());
@@ -54,15 +61,20 @@ public class StudentController {
         System.out.println("Attempting to save student: " + student);
 
         // Check for duplicate student based on name
-        if (isDuplicateStudent(student)) {
+        if (isDuplicateStudent(student, new Student())) {
             System.out.println("Duplicate student found. Cannot save.");
             return "redirect:/students/error?message=Duplicate student found";
         }
 
-        // Parse the birthDate string into a LocalDate object using the parseDate method
-        String birthDate = String.valueOf(student.getBirth());
-        LocalDate birth = parseDate(birthDate);
-        student.setBirth(birth);
+        // Update the format of birthDate in the student object
+        try {
+            LocalDate birth = LocalDate.parse(student.getBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+                    DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            student.setBirth(birth);
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format: " + student.getBirth());
+            return "redirect:/students/error?message=Invalid date format";
+        }
 
         studentRepository.saveStudent(student);
         System.out.println("Student saved successfully.");
@@ -82,17 +94,31 @@ public class StudentController {
     @PutMapping("/update")
     public String updateStudent(@ModelAttribute Student student) throws IOException {
         Student existingStudent = studentRepository.getStudentById(student.getId());
+
         if (existingStudent == null) {
             throw new StudentNotFoundException("Student not found.");
         }
 
         // Check for duplicate student based on name
-        if (isDuplicateStudent(student)) {
+        if (isDuplicateStudent(student, existingStudent)) {
             System.out.println("Duplicate student found. Cannot update.");
             return "redirect:/students/error?message=Duplicate student found";
         }
 
-        studentRepository.updateStudent(student);
+        // Parse the birthDate string into a LocalDate object using the format "dd.MM.yyyy"
+        String birthDate = student.getBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        LocalDate birth = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+
+        // Update the student's birthdate
+        existingStudent.setBirth(birth);
+
+        // Update other fields of the student
+        existingStudent.setFirstname(student.getFirstname());
+        existingStudent.setLastname(student.getLastname());
+        existingStudent.setEmail(student.getEmail());
+        existingStudent.setPhone(student.getPhone());
+
+        studentRepository.updateStudent(existingStudent);
         System.out.println("Student updated successfully.");
         return "redirect:/students/success?action=updated";
     }
@@ -105,6 +131,7 @@ public class StudentController {
         if (existingStudent == null) {
             throw new StudentNotFoundException("Student not found.");
         }
+
         studentRepository.deleteStudent(id);
         System.out.println("Student with ID: " + id + " deleted successfully.");
         return "redirect:/students/success?action=deleted";
@@ -130,12 +157,12 @@ public class StudentController {
         return "error-page";
     }
 
-    private boolean isDuplicateStudent(Student student) {
+    private boolean isDuplicateStudent(Student newStudent, Student existingStudent) {
         List<Student> allStudents = studentRepository.getAllStudents();
-        for (Student existingStudent : allStudents) {
-            if (!existingStudent.getId().equals(student.getId()) &&
-                    existingStudent.getFirstname().equals(student.getFirstname()) &&
-                    existingStudent.getLastname().equals(student.getLastname())) {
+        for (Student student : allStudents) {
+            if (!student.getId().equals(existingStudent.getId()) &&
+                    student.getFirstname().equals(newStudent.getFirstname()) &&
+                    student.getLastname().equals(newStudent.getLastname())) {
                 // Found a duplicate student
                 return true;
             }
@@ -143,25 +170,6 @@ public class StudentController {
         // No duplicate student found
         return false;
     }
-
-    private LocalDate parseDate(String date) {
-        List<DateTimeFormatter> formatters = List.of(
-                DateTimeFormatter.ofPattern("dd.MM.yyyy"),
-                DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        );
-
-        for (DateTimeFormatter formatter : formatters) {
-            try {
-                return LocalDate.parse(date, formatter);
-            } catch (DateTimeParseException ignored) {
-                // Ignore exception
-            }
-        }
-
-        throw new IllegalArgumentException("Invalid date format: " + date);
-    }
-
-
 
 }
 

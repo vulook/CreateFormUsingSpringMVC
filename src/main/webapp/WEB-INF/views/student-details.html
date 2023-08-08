@@ -13,14 +13,17 @@
 <p> ID: <span th:text="${student.id}"/></p>
 <p> First Name: <span th:text="${student.firstname}"/></p>
 <p> Last Name: <span th:text="${student.lastname}"/></p>
-<p> Birth Date: <span th:text="${student.birth}"/></p>
+<p> Birth Date: <span th:text="${#temporals.format(student.birth, 'dd.MM.yyyy')}"/></p>
 <p> Email: <span th:text="${student.email}"/></p>
 <p> Phone: <span th:text="${student.phone}"/></p>
 
 <br/>
 <br/>
 
-<a th:href="@{/students/list}">Back to Student List</a>
+<!-- Button to go back to the student list -->
+<form th:action="@{/students/list}" method="get">
+    <button type="submit">Go Back to Student List</button>
+</form>
 
 <br/>
 <br/>

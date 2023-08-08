@@ -15,7 +15,9 @@
         <th>ID</th>
         <th>Full Name</th>
         <th>Age</th>
+        <th> </th>
         <th>Actions</th>
+        <th> </th>
     </tr>
 
     <tr th:each="student : ${students}">
@@ -54,6 +56,14 @@
 <!-- Button to add a new student -->
 <form th:action="@{/students/form-for-save}" method="get">
     <button type="submit">Add Student</button>
+</form>
+
+<br/>
+<br/>
+
+<!-- Button to view all students -->
+<form th:action="@{/students/view-all}" method="get">
+    <button type="submit">View All Students</button>
 </form>
 
 <br/>

@@ -14,7 +14,10 @@
 <br>
 <br>
 
-<a th:href="@{/students/list}">Go back to Student List</a>
+<!-- Button to go back to the student list -->
+<form th:action="@{/students/list}" method="get">
+    <button type="submit">Go Back to Student List</button>
+</form>
 
 <br>
 <br>

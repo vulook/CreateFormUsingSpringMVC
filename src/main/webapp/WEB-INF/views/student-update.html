@@ -24,7 +24,7 @@
     <br>
 
     <label for="birthdate">Birth Date:</label>
-    <input type="date" id="birthdate" name="birth" th:value="${student.birth != null ? student.birth.format('yyyy-MM-dd') : ''}" required>
+    <input type="date" id="birthdate" name="birth" th:value="${student.birth}" required>
     <br>
 
     <label for="email">Email:</label>
@@ -41,7 +41,10 @@
 <br/>
 <br/>
 
-<a th:href="@{/students/list}">Back to Student List</a>
+<!-- Button to go back to the student list -->
+<form th:action="@{/students/list}" method="get">
+    <button type="submit">Go Back to Student List</button>
+</form>
 
 <br/>
 <br/>
