@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Success Page</title>
+    <link rel="stylesheet" th:href="@{/resources/static/css/styles.css}"/>
+</head>
+
+<body>
+<h1>Success!</h1>
+<p th:if="${action == 'saved'}">Student successfully saved!</p>
+<p th:if="${action == 'updated'}">Student successfully updated!</p>
+<p th:if="${action == 'deleted'}">Student successfully deleted!</p>
+<p>Total Records: <span th:text="${totalRecords}"/></p>
+
+<br/>
+<br/>
+
+<a th:href="@{/students/form-for-save}">Go back to Add Student Form</a>
+
+<br/>
+
+<a th:href="@{/students/list}">Go back to Student List</a>
+
+<br/>
+<br/>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student Details</title>
+    <link rel="stylesheet" th:href="@{/resources/static/css/styles.css}"/>
+</head>
+
+<body>
+<h1>Student Details</h1>
+
+<p> ID: <span th:text="${student.id}"/></p>
+<p> First Name: <span th:text="${student.firstname}"/></p>
+<p> Last Name: <span th:text="${student.lastname}"/></p>
+<p> Birth Date: <span th:text="${student.birth}"/></p>
+<p> Email: <span th:text="${student.email}"/></p>
+<p> Phone: <span th:text="${student.phone}"/></p>
+
+<br/>
+<br/>
+
+<a th:href="@{/students/list}">Back to Student List</a>
+
+<br/>
+<br/>
+
+</body>
+</html>
