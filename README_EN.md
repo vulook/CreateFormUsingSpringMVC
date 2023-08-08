@@ -61,7 +61,7 @@ The StudentController controller was created, which defines the URL paths and me
 ***Web forms:*** 
 Web forms were created for interaction with the user. They allow users to view a list of students, add a new student, update, and delete an existing one.
 
-***Date processing:**
+***Date processing:***
 A method for processing the date on the controller side was implemented. It converts the date string from the form to a LocalDate object.
 
 ***Duplicate handling:***
