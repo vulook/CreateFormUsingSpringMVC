@@ -2,6 +2,8 @@ package edu.cbsystematics.com.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import edu.cbsystematics.com.exception.CreateFormUsingSpringMVCRuntimeException;
 import edu.cbsystematics.com.model.Student;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,18 +27,36 @@ public class StudentUtil {
     private final ObjectMapper objectMapper;
 
     public StudentUtil() {
-
-        objectMapper = new ObjectMapper();
-
-        // Register the JavaTimeModule
-        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
     }
 
     public Path getJSONFilePath() {
-        try {
-            return Paths.get(Objects.requireNonNull(getClass().getResource(JSON_FILE)).toURI());
-        } catch (URISyntaxException e) {
-            throw new CreateFormUsingSpringMVCRuntimeException("StudentUtil: Error getting JSON file path.", e);
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resourceUrl = classLoader.getResource(JSON_FILE);
+
+        // File not found in resources
+        if (resourceUrl == null) {
+            try {
+                Path filePath = Paths.get(Objects.requireNonNull(getClass().getResource("")).toURI()).resolve(JSON_FILE);
+                String initialJsonContent = "[]"; // Initial JSON file content
+                Files.write(filePath, initialJsonContent.getBytes());
+                System.out.println("File created in resources: " + filePath);
+                return filePath;
+            } catch (IOException | URISyntaxException e) {
+                throw new CreateFormUsingSpringMVCRuntimeException("StudentUtil: Unable to locate or create JSON file.", e);
+            }
+        } else {
+            // File found in resources
+            try {
+                Path filePath = Paths.get(resourceUrl.toURI());
+                System.out.println("File found in resources: " + filePath);
+                return filePath;
+            } catch (URISyntaxException e) {
+                throw new CreateFormUsingSpringMVCRuntimeException("StudentUtil: Error getting JSON file path.", e);
+            }
         }
     }
 
@@ -68,7 +89,8 @@ public class StudentUtil {
             Path filePath = getJSONFilePath();
             if (Files.exists(filePath)) {
                 String jsonContent = Files.readString(filePath);
-                students = objectMapper.readValue(jsonContent, new TypeReference<List<Student>>() {});
+                students = objectMapper.readValue(jsonContent, new TypeReference<List<Student>>() {
+                });
                 System.out.println("StudentUtil: read from JSON file.");
 
             } else {
@@ -81,7 +103,6 @@ public class StudentUtil {
 
         return students;
     }
-
 
 }
 

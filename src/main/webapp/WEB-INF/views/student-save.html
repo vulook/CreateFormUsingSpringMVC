@@ -20,7 +20,7 @@
     <br>
 
     <label for="birth">Birth Date:</label>
-    <input type="date" id="birth" name="birth" required>
+    <input type="date" id="birth" name="birth" th:value="${student.birth != null ? student.birth.format('yyyy-MM-dd') : ''}" required>
     <br>
 
     <label for="email">Email:</label>

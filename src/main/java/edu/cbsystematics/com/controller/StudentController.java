@@ -9,9 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 
@@ -36,9 +33,11 @@ public class StudentController {
     @GetMapping("/details/{id}")
     public String showStudentDetails(@PathVariable Long id, Model model) {
         Student student = studentRepository.getStudentById(id);
+
         if (student == null) {
             throw new StudentNotFoundException("Student not found.");
         }
+
         model.addAttribute("student", student);
         return "student-details";
     }
@@ -66,16 +65,6 @@ public class StudentController {
             return "redirect:/students/error?message=Duplicate student found";
         }
 
-        // Update the format of birthDate in the student object
-        try {
-            LocalDate birth = LocalDate.parse(student.getBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-                    DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-            student.setBirth(birth);
-        } catch (DateTimeParseException e) {
-            System.out.println("Invalid date format: " + student.getBirth());
-            return "redirect:/students/error?message=Invalid date format";
-        }
-
         studentRepository.saveStudent(student);
         System.out.println("Student saved successfully.");
         return "redirect:/students/success?action=saved";
@@ -84,10 +73,13 @@ public class StudentController {
     @GetMapping("/form-for-update/{id}")
     public String updateStudentForm(@PathVariable Long id, Model model) {
         Student student = studentRepository.getStudentById(id);
+
         if (student == null) {
             throw new StudentNotFoundException("Student not found.");
         }
+
         model.addAttribute("student", student);
+        System.out.println("Student for update: " + student);
         return "student-update";
     }
 
@@ -105,19 +97,13 @@ public class StudentController {
             return "redirect:/students/error?message=Duplicate student found";
         }
 
-        // Parse the birthDate string into a LocalDate object using the format "dd.MM.yyyy"
-        String birthDate = student.getBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        LocalDate birth = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-
-        // Update the student's birthdate
-        existingStudent.setBirth(birth);
-
-        // Update other fields of the student
         existingStudent.setFirstname(student.getFirstname());
         existingStudent.setLastname(student.getLastname());
+        existingStudent.setBirth(student.getBirth());
         existingStudent.setEmail(student.getEmail());
         existingStudent.setPhone(student.getPhone());
 
+        System.out.println("Updated student: " + existingStudent);
         studentRepository.updateStudent(existingStudent);
         System.out.println("Student updated successfully.");
         return "redirect:/students/success?action=updated";

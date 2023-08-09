@@ -25,7 +25,7 @@ public class Student {
 
     @NotNull(message = "Birth date cannot be empty")
     @Past(message = "Birth date should be a past date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birth;
 
     @NotEmpty(message = "Email should not be empty")
